@@ -1,0 +1,36 @@
+comandos principais
+
+docker container run (sempre cria uma nova instancia)
+
+#cria um container em 2 plano(daemon), nome 'ex-daemon-basic, porta de acesso 8080 e 80 interna
+#pasta correspondente 'pasta atual = ex-volume'/html recebendo /usr/share/nginx/html
+docker container run -d --name ex-daemon-basic -p 8080:80 -v $(pwd)/html:/usr/share/nginx/html nginx
+
+docker container start 'nome/ID'
+docker container restart
+docker container stop
+
+#3 comandos iguais. com a opção "-a" mostra os não ativos
+docker container ls
+docker container ps
+docker container list
+
+#acessando log
+docker container logs 'nome'
+
+#mostrando configurações
+docker container inspect 'nome'
+
+#executando um processo (container precisa estar ativo)
+docker container exec 'nome' 'comando' (ex: uname -or)
+
+#a sintaxe docker evolui para simplificar o entendimento, ex:
+docker image ls (listar imagem)
+docker container ls (listar container)
+docker volume ls (listar volumes)
+docker image rm (remover imagem)
+
+#fazer a primeira build. criar arquivo Dockerfile na pasta em questao
+docker image build -t ex-simple-build .
+#criando um container
+docker container run -p 80:80 ex-simple-build
