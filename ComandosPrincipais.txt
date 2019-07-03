@@ -30,7 +30,33 @@ docker container ls (listar container)
 docker volume ls (listar volumes)
 docker image rm (remover imagem)
 
-#fazer a primeira build. criar arquivo Dockerfile na pasta em questao
+#fazer a primeira build. criar arquivo Dockerfile na pasta em questao (primeira-build)
 docker image build -t ex-simple-build .
 #criando um container
 docker container run -p 80:80 ex-simple-build
+
+#build com argumentos
+docker image build -t ex-build-arg .
+#subiu de nivel agora. usando o bash -c pra poder executar varios comandos (pasta build-com-arg)
+docker container run ex-build-arg bash -c 'echo $S3_BUCKET'
+#alterando a variavel dentro da imagem e regravando a mesma
+docker image build --build-arg S3_BUCKET=myapp -t ex-build-arg .
+#executando novamente pra confirmar alteração
+docker container run ex-build-arg bash -c 'echo $S3_BUCKET'
+#fazendo consulta com inspect filtrando por 'maintainer'...
+docker image inspect --format="{{index .Config.Labels \"maintainer\"}}" ex-build-arg
+
+#build com copy
+docker image build -t ex-build-copy .
+#lembrando do Dockerfile + index.html na pasta "build-com-copy"
+docker container run -p 80:80 ex-build-copy
+
+#build dev python (faz referência da imagem dentro do docker file, que já baixa a imagem necessária)
+docker image build -t ex-build-dev .
+docker container run -it -v $(pwd):/app -p 80:8000 --name python-server ex-build-dev
+#e agora criamos outro container pra acessar o log dentro deste que acabou de ser criado
+docker container run --volumes-from=python-server debian cat /log/http-server.log
+
+
+
+
