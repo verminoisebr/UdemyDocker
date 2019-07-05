@@ -58,5 +58,22 @@ docker container run -it -v $(pwd):/app -p 80:8000 --name python-server ex-build
 docker container run --volumes-from=python-server debian cat /log/http-server.log
 
 
+#docker-compose email-worker. no diretorio deve haver docker-compose.yml com os comandos
+docker-compose up -d
+docker-compose ps
+docker-compose exec db psql -U postgres -c '\l' #comando para listar usuarios
+#depois de criar scripts
+docker-compose down (parar compose ou verificar se esta ativo com opçao 'ps')
+docker-compose up
+docker-compose exec db psql -U postgres -f /scripts/check.sql
+#depois de varias alterações e com o banco funcionando e rede tb, cadastrar algo no banco no navegador localhost
+docker-compose exec db psql -U postgres -d email_sender -c 'select * from emails'
+
+#escalando serviços nosso caso worker
+docker-compose up -d --scale worker=3
+docker-compose logs -f -t worker
+
+
+
 
 
